@@ -1,11 +1,12 @@
 <?php
 
-function getAllProduct(){
+function getAllProducts(){
     $sql = "SELECT * FROM products";
     return getAssocResult($sql);
 }
 
 function getOneProduct($id){
+    $id = (int)$id;
     $sql = "SELECT * FROM products WHERE id = $id";
     $result = show($sql);
     return $result;
@@ -14,7 +15,8 @@ function getOneProduct($id){
 
 function createProduct($name,$price,$description,$images)
 {
-    $format = explode('.',$images['name'])[1];
+
+    $format = pathinfo($images['name'], PATHINFO_EXTENSION);
     $uploadir = '/img/products/';
     $newImagesName = uniqid('', true).'.'.$format;
     $uploadfile = $uploadir . $newImagesName;
@@ -37,9 +39,10 @@ function createProduct($name,$price,$description,$images)
 
 function editProduct($id,$name,$price,$description,$images)
 {
+    $id = (int)$id;
     if(!empty($images['name'])){
 
-        $format = mb_strtolower(explode('.',$images['name'])[1]);
+        $format = pathinfo($images['name'], PATHINFO_EXTENSION);
         $uploadir = '/img/products/';
         $newImagesName = uniqid('', true).'.'.$format;
         $uploadfile = $uploadir . $newImagesName ;
@@ -77,7 +80,7 @@ function deleteProduct($id){
     return execQuery($sql);
 }
 
-function renderAllProduct($products){
+function renderAllProducts($products){
     $result = '<div class="product-list"><div class="container"><div class="row">';
     foreach ($products as $product) {
         $result .= render(TEMPLATES_DIR . 'productItem.tpl',$product);
